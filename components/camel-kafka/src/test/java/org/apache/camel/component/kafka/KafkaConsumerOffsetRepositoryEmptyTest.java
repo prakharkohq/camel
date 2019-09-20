@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
@@ -26,6 +27,8 @@ import org.apache.camel.impl.engine.MemoryStateRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-initialize";
@@ -73,6 +76,9 @@ public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTes
                                                 "message-8", "message-9");
 
         result.assertIsSatisfied(3000);
+
+        // to give the local state some buffer
+        await().atMost(1, TimeUnit.SECONDS).until(stateRepository::isStarted);
 
         assertEquals("partition-0", "4", stateRepository.getState(TOPIC + "/0"));
         assertEquals("partition-1", "4", stateRepository.getState(TOPIC + "/1"));

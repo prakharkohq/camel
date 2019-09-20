@@ -119,6 +119,7 @@
         <module>camel-aws-sns</module>
         <module>camel-aws-sqs</module>
         <module>camel-aws-swf</module>
+        <module>camel-aws-translate</module>
         <module>camel-aws-xray</module>
         <module>camel-azure</module>
         <module>camel-base64</module>
@@ -154,6 +155,7 @@
         <module>camel-dozer</module>
         <module>camel-drill</module>
         <module>camel-dropbox</module>
+        <module>camel-debezium</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch-rest</module>
         <module>camel-elsql</module>
@@ -275,6 +277,7 @@
         <module>camel-reactor</module>
         <module>camel-rest-swagger</module>
         <module>camel-restlet</module>
+	<module>camel-robotframework</module>
         <module>camel-rss</module>
         <module>camel-rxjava</module>
         <module>camel-saga</module>
@@ -336,6 +339,7 @@
         <module>camel-websocket-jsr356</module>
         <module>camel-wordpress</module>
         <module>camel-xchange</module>
+        <module>camel-xj</module>
         <module>camel-xmlsecurity</module>
         <module>camel-xmpp</module>
         <module>camel-xstream</module>

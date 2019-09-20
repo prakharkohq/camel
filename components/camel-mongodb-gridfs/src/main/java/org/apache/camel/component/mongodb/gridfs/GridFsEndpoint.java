@@ -18,7 +18,6 @@ package org.apache.camel.component.mongodb.gridfs;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
@@ -77,7 +76,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     private String fileAttributeName = "camel-processed";
 
 
-    private Mongo mongoConnection;
+    private MongoClient mongoConnection;
     private DB db;
     private GridFS gridFs;
     private DBCollection filesCollection;
@@ -150,13 +149,13 @@ public class GridFsEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of {@link com.mongodb.Mongo} to use.
+     * Name of {@link com.mongodb.MongoClient} to use.
      */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
     }
 
-    public Mongo getMongoConnection() {
+    public MongoClient getMongoConnection() {
         return mongoConnection;
     }
 
@@ -165,7 +164,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
      *
      * @param mongoConnection the connection to the database
      */
-    public void setMongoConnection(Mongo mongoConnection) {
+    public void setMongoConnection(MongoClient mongoConnection) {
         this.mongoConnection = mongoConnection;
     }
 

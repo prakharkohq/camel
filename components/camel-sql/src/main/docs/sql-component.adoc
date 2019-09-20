@@ -166,7 +166,7 @@ with the following path and query parameters:
 | *useIterator* (consumer) | Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object. defaults to true. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *processingStrategy* (consumer) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch. |  | SqlProcessingStrategy
 | *batch* (producer) | Enables or disables batch mode | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -176,7 +176,7 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *parametersCount* (advanced) | If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead. |  | int
 | *placeholder* (advanced) | Specifies a character that will be replaced to in SQL query. Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change). | # | String
-| *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement. |  | SqlPrepareStatement Strategy
+| *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement. |  | SqlPrepareStatementStrategy
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *templateOptions* (advanced) | Configures the Spring JdbcTemplate with the key/values from the Map |  | Map
 | *usePlaceholder* (advanced) | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true | true | boolean
@@ -187,7 +187,7 @@ with the following path and query parameters:
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
 | *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
 | *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
@@ -257,8 +257,9 @@ more dynamic as the SQL query is from the message body.
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
 http://static.springframework.org/spring/docs/2.5.x/api/org/springframework/jdbc/core/JdbcTemplate.html#queryForList(java.lang.String,%20java.lang.Object%91%93)[JdbcTemplate.queryForList()]
-method. For `update` operations, the result is the number of updated
-rows, returned as an `Integer`.
+method. For `update` operations, a `NULL` body is returned as the `update` operation is only set as a header and never as a body.
+
+NOTE: See <<sql-component-header-values, Header values>> for more information on the `update` operation.
 
 By default, the result is placed in the message body.  If the
 outputHeader parameter is set, the result is placed in the header.  This
@@ -293,13 +294,13 @@ from("direct:withSplitModel")
         .end();
 ----
  
-
+[[sql-component-header-values]]
 == Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
 
-[width="100%",cols="10%,90%",options="header",]
+[cols="1,3"]
 |===
 |Header |Description
 
@@ -320,7 +321,7 @@ When performing `insert` operations, the SQL Component stores the rows
 with the generated keys and number of these rown in the following
 message headers:
 
-[width="100%",cols="10%,90%",options="header",]
+[cols="1,3"]
 |===
 |Header |Description
 
@@ -542,7 +543,7 @@ You have a few options to tune the
 `org.apache.camel.processor.idempotent.jdbc.JdbcMessageIdRepository` for
 your needs:
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[cols="1,1,2"]
 |===
 |Parameter |Default Value |Description
 
@@ -775,9 +776,9 @@ JDBC vendor.
 <bean id="repo"
 class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
   <property name="transactionManager" ref="transactionManager"/>
-  <propertyname="repositoryName" value="aggregation"/>
+  <property name="repositoryName" value="aggregation"/>
   <property name="dataSource" ref="dataSource"/>
-  <property name"jdbcOptimisticLockingExceptionMapper" ref="myExceptionMapper"/>
+  <property name="jdbcOptimisticLockingExceptionMapper" ref="myExceptionMapper"/>
 </bean>
 <!-- use the default mapper with extraFQN class names from our JDBC driver -->
 <bean id="myExceptionMapper" class="org.apache.camel.processor.aggregate.jdbc.DefaultJdbcOptimisticLockingExceptionMapper">
@@ -789,6 +790,50 @@ class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
   </property>
 </bean>
 ----
+
+=== Propagation behavior
+
+`JdbcAggregationRepository` uses two distinct _transaction templates_ from Spring-TX. One is read-only
+and one is used for read-write operations.
+
+However, when using `JdbcAggregationRepository` within a route that itself uses `<transacted />` and there's
+common `PlatformTransactionManager` used, there may be a need to configure _propagation behavior_ used by
+transaction templates inside `JdbcAggregationRepository`.
+
+Here's a way to do it:
+[source,xml]
+----
+<bean id="repo"
+class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
+  <property name="propagationBehaviorName" value="PROPAGATION_NESTED" />
+</bean>
+----
+
+Propagation is specified by constants of `org.springframework.transaction.TransactionDefinition` interface,
+so `propagationBehaviorName` is convenient setter that allows to use names of the constants.
+
+=== PostgreSQL case
+
+There's special database that may cause problems with optimistic locking used by `JdbcAggregationRepository`.
+PostgreSQL marks connection as invalid in case of data integrity violation exception (the one with SQLState 23505).
+This makes the connection effectively unusable within nested transaction.
+Details can be found
+https://www.postgresql.org/message-id/200609241203.59292.ralf.wiebicke%40exedio.com[in this document].
+
+`org.apache.camel.processor.aggregate.jdbc.PostgresAggregationRepository` extends `JdbcAggregationRepository` and
+uses special `INSERT .. ON CONFLICT ..` statement to provide optimistic locking behavior.
+
+This statement is (with default aggregation table definition):
+[source,sql]
+----
+INSERT INTO aggregation (id, exchange) values (?, ?) ON CONFLICT DO NOTHING
+----
+
+Details can be found https://www.postgresql.org/docs/9.5/sql-insert.html[in PostgreSQL documentation].
+
+When this clause is used, `java.sql.PreparedStatement.executeUpdate()` call returns `0` instead of throwing
+SQLException with SQLState=23505. Further handling is exactly the same as with generic `JdbcAggregationRepository`,
+but without marking PostgreSQL connection as invalid.
 
 == Camel Sql Starter
 

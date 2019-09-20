@@ -100,7 +100,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         if (configuration.isHttpProxy() || configuration.isDisableStreamCache()) {
             // keep the body as is, and use type converters
             // for proxy use case pass the request body buffer directly to the response to avoid additional processing
-            answer.setBody(request.content());
+            // we need to retain it so that the request can be released and we can keep the content
+            answer.setBody(request.content().retain());
         } else {
             // turn the body into stream cached (on the client/consumer side we can facade the netty stream instead of converting to byte array)
             NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(request.content());
@@ -194,8 +195,14 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
         }
 
-        // add uri parameters as headers to the Camel message
-        if (request.uri().contains("?")) {
+        // add uri parameters as headers to the Camel message;
+        // when acting as a HTTP proxy we don't want to place query
+        // parameters in Camel message headers as the query parameters
+        // will be passed via Exchange.HTTP_QUERY, otherwise we could have
+        // both the Exchange.HTTP_QUERY and the values from the message
+        // headers, so we end up with two values for the same query
+        // parameter
+        if (!configuration.isHttpProxy() && request.uri().contains("?")) {
             String query = StringHelper.after(request.uri(), "?");
             Map<String, Object> uriParameters = URISupport.parseQuery(query, false, true);
 
@@ -217,9 +224,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         // if body is application/x-www-form-urlencoded then extract the body as query string and append as headers
         // if it is a bridgeEndpoint we need to skip this part of work
+        // if we're proxying the body is a buffer that we do not want to consume directly
         if (request.method().name().equals("POST") && request.headers().get(Exchange.CONTENT_TYPE) != null
                 && request.headers().get(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
-                && !configuration.isBridgeEndpoint()) {
+                && !configuration.isBridgeEndpoint() && !configuration.isHttpProxy()) {
 
             String charset = "UTF-8";
 
@@ -522,22 +530,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             httpMethod = HttpMethod.valueOf(headerMethod);
         }
 
-        final Exchange exchange = message.getExchange();
-        final Object proxyRequest;
-        if (exchange != null) {
-            proxyRequest = exchange.getProperty(NettyHttpConstants.PROXY_REQUEST);
-        } else {
-            proxyRequest = null;
-        }
-
         HttpRequest request = null;
         if (message instanceof NettyHttpMessage) {
             // if the request is already given we should set the values
             // from message headers and pass on the same request
             final FullHttpRequest givenRequest = ((NettyHttpMessage) message).getHttpRequest();
             // we need to make sure that the givenRequest is the original
-            // request received by the proxy
-            if (givenRequest != null && proxyRequest == givenRequest) {
+            // request received by the proxy, only when the body wasn't
+            // modified by a processor on route
+            if (givenRequest != null && givenRequest.content() == body) {
                 request = givenRequest
                         .setProtocolVersion(protocol)
                         .setMethod(httpMethod)
@@ -641,7 +642,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // must include HOST header as required by HTTP 1.1
         // use URI as its faster than URL (no DNS lookup)
         URI u = new URI(fullUri);
-        String hostHeader = u.getHost() + (u.getPort() == 80 ? "" : ":" + u.getPort());
+        int port = u.getPort();
+        String hostHeader = u.getHost() + (port == 80 || port == -1 ? "" : ":" + u.getPort());
         request.headers().set(HttpHeaderNames.HOST.toString(), hostHeader);
         LOG.trace("Host: {}", hostHeader);
 

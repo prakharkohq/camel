@@ -1,7 +1,7 @@
 = Components
 
 // components: START
-Number of Components: 297 in 235 JAR artifacts (0 deprecated)
+Number of Components: 301 in 239 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -124,6 +124,9 @@ Number of Components: 297 in 235 JAR artifacts (0 deprecated)
 | link:camel-aws-sdb/src/main/docs/aws-sdb-component.adoc[AWS SimpleDB] (camel-aws-sdb) +
 `aws-sdb:domainName` | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
 
+| link:camel-aws-translate/src/main/docs/aws-translate-component.adoc[AWS Translate] (camel-aws-translate) +
+`aws-translate:label` | 3.0 | The aws-kms is used for managing Amazon Translate
+
 | link:camel-azure/src/main/docs/azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) +
 `azure-blob:containerOrBlobUri` | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
@@ -216,6 +219,9 @@ Number of Components: 297 in 235 JAR artifacts (0 deprecated)
 
 | link:camel-dataset/src/main/docs/dataset-test-component.adoc[DataSet Test] (camel-dataset) +
 `dataset-test:name` | 1.3 | The dataset-test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+
+| link:camel-debezium/src/main/docs/debezium-component.adoc[Debezium] (camel-debezium) +
+`debezium:connectorType` | 3.0 | Represents a Debezium endpoint which is used for interacting with Debezium embedded engine.
 
 | link:camel-digitalocean/src/main/docs/digitalocean-component.adoc[DigitalOcean] (camel-digitalocean) +
 `digitalocean:operation` | 2.19 | The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
@@ -709,6 +715,9 @@ Number of Components: 297 in 235 JAR artifacts (0 deprecated)
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
 
+| link:camel-robotframework/src/main/docs/robotframework-component.adoc[Robot Framework] (camel-robotframework) +
+`robotframework:resourceUri` | 3.0 | Represents a RobotFramework endpoint.
+
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.
 
@@ -873,6 +882,9 @@ Number of Components: 297 in 235 JAR artifacts (0 deprecated)
 
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
+
+| link:camel-xj/src/main/docs/xj-component.adoc[XJ] (camel-xj) +
+`xj:resourceUri` | 3.0 | Transforms json/xml message back and forth using a XSLT.
 
 | link:camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) +
 `xmlsecurity:command:name` | 2.12 | Used to sign and verify exchanges using the XML signature specification.
@@ -1053,13 +1065,11 @@ Number of Languages: 17 in 11 JAR artifacts (0 deprecated)
 == Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 34 in 34 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
-
-| link:camel-activemq/src/main/docs/activemq.adoc[Activemq] (camel-activemq) |  | ActiveMQ component for Camel
 
 | link:camel-attachments/src/main/docs/attachments.adoc[Attachments] (camel-attachments) | 3.0 | Java Attachments support for Camel Message
 

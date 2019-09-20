@@ -21,33 +21,38 @@ import java.util.function.Function;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.eclipse.microprofile.metrics.ConcurrentGauge;
+import org.apache.camel.component.microprofile.metrics.gauge.SimpleGauge;
 import org.eclipse.microprofile.metrics.Metadata;
 import org.eclipse.microprofile.metrics.MetricRegistry;
 import org.eclipse.microprofile.metrics.Tag;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_DECREMENT;
-import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_INCREMENT;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsConstants.HEADER_GAUGE_VALUE;
+import static org.apache.camel.component.microprofile.metrics.MicroProfileMetricsHelper.findMetric;
 
-public class MicroProfileMetricsGaugeProducer extends AbstractMicroProfileMetricsProducer<ConcurrentGauge> {
+public class MicroProfileMetricsGaugeProducer extends AbstractMicroProfileMetricsProducer<SimpleGauge> {
 
     public MicroProfileMetricsGaugeProducer(MicroProfileMetricsEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    protected void doProcess(Exchange exchange, MicroProfileMetricsEndpoint endpoint, ConcurrentGauge gauge) {
+    protected void doProcess(Exchange exchange, MicroProfileMetricsEndpoint endpoint, SimpleGauge gauge) {
         Message in = exchange.getIn();
-        Boolean finalIncrement = getBooleanHeader(in, HEADER_GAUGE_INCREMENT, endpoint.getGaugeIncrement());
-        Boolean finalDecrement = getBooleanHeader(in, HEADER_GAUGE_DECREMENT, endpoint.getGaugeDecrement());
-        if (finalIncrement && !finalDecrement) {
-            gauge.inc();
-        } else if (finalDecrement) {
-            gauge.dec();
+        Number finalGaugeValue = getNumericHeader(in, HEADER_GAUGE_VALUE, endpoint.getGaugeValue());
+
+        if (finalGaugeValue != null) {
+            gauge.setValue(finalGaugeValue);
         }
     }
 
     @Override
-    protected Function<MetricRegistry, ConcurrentGauge> registerMetric(Metadata metadata, List<Tag> tags) {
-        return metricRegistry -> metricRegistry.concurrentGauge(metadata, tags.toArray(new Tag[0]));
+    protected Function<MetricRegistry, SimpleGauge> registerMetric(Metadata metadata, List<Tag> tags) {
+        return metricRegistry -> {
+            Tag[] tagArray = tags.toArray(new Tag[0]);
+            SimpleGauge existing = findMetric(metricRegistry, metadata.getName(), SimpleGauge.class, tags);
+            if (existing == null) {
+                return metricRegistry.register(metadata, new SimpleGauge(), tagArray);
+            }
+            return existing;
+        };
     }
 }

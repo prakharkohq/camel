@@ -36,7 +36,6 @@
 * xref:camel-boot.adoc[Camel Boot]
 * xref:components::cdi.adoc[Working with Camel and CDI]
 * xref:spring.adoc[Working with Camel and Spring]
-* xref:guice.adoc[Working with Camel and Guice]
 * xref:karaf.adoc[Working with Camel and Karaf]
 * xref:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
 * xref:bean-integration.adoc[Bean Integration]
@@ -55,7 +54,6 @@ asynchronous
 * [Using CamelProxy] for how to use proxies for clients to easily invoke
 camel routes without them knowing
 * [Camel Maven Plugin] for running Camel from a Maven goal
-* [Guice Maven Plugin] for working with xref:guice.adoc[Guice]
 * [Camel Maven Archetypes]
 * [Creating a new Spring based Camel Route]
 * [Camel JMX]
@@ -128,8 +126,6 @@ camel routes without them knowing
 * xref:components::spring.adoc[Spring DSL]
 * xref:using-osgi-blueprint-with-camel.adoc[Blueprint DSL]
 * xref:rest-dsl.adoc[Rest DSL]
-* xref:groovy-dsl.adoc[Groovy DSL]
-* xref:scala-dsl.adoc[Scala DSL]
 * xref:bean-integration.adoc[Annotation DSL]
 * Kotlin DSL
 
@@ -201,7 +197,8 @@ camel routes without them knowing
 ** xref:components::aws-sns-component.adoc[AWS Simple Notification System]
 ** xref:components::aws-sqs-component.adoc[AWS Simple Queue Service]
 ** xref:components::aws-swf-component.adoc[AWS Simple Workflow]
-** xref:components::aws-sdb-component.adoc[AWS SimpleDB]
+** xref:components::aws-sdb-component.adoc[AWS Translate]
+** xref:components::aws-translate-component.adoc[AWS SimpleDB]
 ** xref:components::azure-blob-component.adoc[Azure Storage Blob Service]
 ** xref:components::azure-queue-component.adoc[Azure Storage Queue Service]
 ** xref:components::bean-validator-component.adoc[Bean Validator]
@@ -225,6 +222,7 @@ camel routes without them knowing
 ** xref:components::crypto-cms-component.adoc[Crypto CMS]
 ** xref:components::cxf-component.adoc[CXF]
 ** xref:components::cxfrs-component.adoc[CXF-RS]
+** xref:components::debezium-component.adoc[Debezium]
 ** xref:components::digitalocean-component.adoc[DigitalOcean]
 ** xref:components::disruptor-component.adoc[Disruptor]
 ** xref:components::dns-component.adoc[DNS]
@@ -420,6 +418,7 @@ camel routes without them knowing
 ** xref:components::xchange-component.adoc[XChange]
 ** xref:components::xmlsecurity-component.adoc[XML Security]
 ** xref:components::xmpp-component.adoc[XMPP]
+** xref:components::xj-component.adoc[XJ]
 ** xref:components::xquery-component.adoc[XQuery]
 ** xref:components::yammer-component.adoc[Yammer]
 ** xref:components::zendesk-component.adoc[Zendesk]

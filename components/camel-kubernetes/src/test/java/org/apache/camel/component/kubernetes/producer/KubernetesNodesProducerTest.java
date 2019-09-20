@@ -21,7 +21,13 @@ import java.util.List;
 import java.util.Map;
 
 import io.fabric8.kubernetes.api.model.Node;
+import io.fabric8.kubernetes.api.model.NodeBuilder;
 import io.fabric8.kubernetes.api.model.NodeListBuilder;
+import io.fabric8.kubernetes.api.model.NodeSpec;
+import io.fabric8.kubernetes.api.model.NodeSpecBuilder;
+import io.fabric8.kubernetes.api.model.ObjectMeta;
+import io.fabric8.kubernetes.api.model.Pod;
+import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
 
@@ -72,6 +78,48 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
         assertEquals(3, result.size());
     }
 
+    @Test
+    public void createNodeTest() throws Exception {
+        ObjectMeta meta = new ObjectMeta();
+        meta.setName("test");
+        server.expect().withPath("/api/v1/nodes").andReturn(200, new NodeBuilder().withMetadata(meta).build()).once();
+        Exchange ex = template.request("direct:createNode", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, labels);
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_NAME, "test");
+                NodeSpec spec = new NodeSpecBuilder().build();
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_SPEC, spec);
+            }
+        });
+
+        Node result = ex.getOut().getBody(Node.class);
+
+        assertEquals("test", result.getMetadata().getName());
+    }
+    
+    @Test
+    public void deleteNode() throws Exception {
+        Node node1 = new NodeBuilder().withNewMetadata().withName("node1").withNamespace("test").and().build();
+        server.expect().withPath("/api/v1/nodes/node1").andReturn(200, node1).once();
+
+        Exchange ex = template.request("direct:deleteNode", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NODE_NAME, "node1");
+            }
+        });
+
+        boolean nodeDeleted = ex.getOut().getBody(Boolean.class);
+
+        assertTrue(nodeDeleted);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -79,6 +127,8 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
             public void configure() throws Exception {
                 from("direct:list").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodes");
                 from("direct:listByLabels").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
+                from("direct:createNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=createNode");
+                from("direct:deleteNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=deleteNode");
             }
         };
     }

@@ -4,6 +4,9 @@
 
 *Available as of Camel version 2.21*
 
+*Available as of Camel version 2.21*
+
+
 
 The ElasticSearch component allows you to interface with an
 https://www.elastic.co/products/elasticsearch[ElasticSearch] 6.x API using the REST Client library.
@@ -179,7 +182,6 @@ indexId in the body.
 
 |Ping |None  |Pings the remote Elasticsearch cluster and returns true if the ping succeeded, false otherwise
 
-|Info |None  |Get the info of the Elasticsearch cluster and returns them as MainResponse class instance
 |===
 
 == Configure the component and enable basic authentication

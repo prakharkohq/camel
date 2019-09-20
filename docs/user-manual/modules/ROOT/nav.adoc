@@ -49,7 +49,6 @@
  ** xref:dsl.adoc[Camel Domain Specific Language]
  ** xref:java-dsl.adoc[Java DSL]
  ** xref:spring.adoc[Spring support]
- ** xref:groovy-dsl.adoc[Groovy DSL]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
 * Supported expression languages
  ** xref:constant-language.adoc[Constant Language]
@@ -131,7 +130,6 @@
  ** xref:wireTap-eip.adoc[Wire Tap EIP]
 * Frequently asked questions
  ** xref:faq/can-i-get-commercial-support.adoc[Can I get commercial support?]
- ** xref:faq/can-i-use-camel-on-java-14.adoc[Can I use Camel on Java 1.4?]
  ** xref:faq/does-camel-work-on-ibms-jdk.adoc[Does Camel work on IBM's JDK?]
  ** xref:support.adoc[How can I get help?]
  ** xref:faq/how-can-i-get-the-source-code.adoc[How can I get the source code?]
@@ -203,7 +201,6 @@
  ** xref:faq/how-to-send-the-same-message-to-multiple-endpoints.adoc[How to send the same message to multiple endpoints?]
  ** xref:faq/how-to-switch-the-cxf-consumer-between-http-and-https-without-touching-the-spring-configuration.adoc[How to switch the CXF consumer between HTTP and HTTPS without touching the Spring configuration?]
  ** xref:faq/how-to-use-a-dynamic-uri-in-to.adoc[How to use a dynamic URI in to()?]
- ** xref:faq/how-to-validate-the-camel-1x-context-xml-from-apache-camel-web-site.adoc[How to validate the camel 1.x context xml from Apache Camel web site?]
  ** xref:faq/is-there-an-ide.adoc[Is there an IDE?]
  ** xref:faq/should-i-deploy-camel-inside-the-activemq-broker-or-in-another-application.adoc[Should I deploy Camel inside the ActiveMQ broker or in another application?]
  ** xref:faq/using-camel-core-testsjar.adoc[Using camel-core-tests.jar]
@@ -235,3 +232,4 @@
  ** xref:faq/why-do-camel-throw-so-many-noclassdeffoundexception-on-startup.adoc[Why do Camel throw so many NoClassDefFoundException on startup?]
  ** xref:faq/why-does-camel-use-too-many-threads-with-producertemplate.adoc[Why does Camel use too many threads with ProducerTemplate?]
  ** xref:faq/why-does-maven-not-download-dependencies.adoc[Why does maven not download dependencies?]
+* xref:camel-3-migration-guide.adoc[Camel 3 Migration Guide]
